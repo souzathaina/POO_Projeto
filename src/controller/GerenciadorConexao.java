@@ -17,6 +17,8 @@ public class GerenciadorConexao {
 
     private Connection conexao;
 
+    
+    //testante 
     public GerenciadorConexao() {
         try { //vai tentar executar
             conexao = DriverManager.getConnection(URL, USER, PASSAWORD);

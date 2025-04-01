@@ -6,6 +6,8 @@
 package view;
 
 import controller.UsuarioController;
+import java.net.URL;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 /**
@@ -40,6 +42,12 @@ public class FrLogin extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Autenticação");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
         jPanel1.setBackground(new java.awt.Color(228, 228, 228));
 
@@ -151,6 +159,16 @@ public class FrLogin extends javax.swing.JFrame {
     private void btnloginMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnloginMouseClicked
         realizarLogin();
     }//GEN-LAST:event_btnloginMouseClicked
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        //adiciona a imgem icone no executar projeto
+        URL caminhoImagem = getClass() .getResource("/images/icon.png");
+        
+        ImageIcon icon = new ImageIcon(caminhoImagem);
+        
+        //define o icone da janela
+        this.setIconImage(icon.getImage());
+    }//GEN-LAST:event_formWindowOpened
 
     private void realizarLogin() {
         String email = edtEmail.getText();
