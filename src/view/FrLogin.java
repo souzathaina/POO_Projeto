@@ -5,10 +5,14 @@
  */
 package view;
 
+import com.sun.glass.events.KeyEvent;
 import controller.UsuarioController;
 import java.net.URL;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import utils.Utils;
+
+
 
 /**
  *
@@ -21,6 +25,8 @@ public class FrLogin extends javax.swing.JFrame {
      */
     public FrLogin() {
         initComponents();
+        //aplicação para o centro da tela
+        this.setLocationRelativeTo(null);
     }
 
     /**
@@ -89,6 +95,11 @@ public class FrLogin extends javax.swing.JFrame {
         });
 
         edtSenha.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
+        edtSenha.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                edtSenhaKeyPressed(evt);
+            }
+        });
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/imagem_usuario.png"))); // NOI18N
 
@@ -170,6 +181,14 @@ public class FrLogin extends javax.swing.JFrame {
         this.setIconImage(icon.getImage());
     }//GEN-LAST:event_formWindowOpened
 
+    private void edtSenhaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_edtSenhaKeyPressed
+        //verifico se foi pressionado o ENTER
+        if (evt.getKeyChar() == KeyEvent.VK_ENTER) {
+            //se foi teclado ENTER tenta fazer o login
+            realizarLogin();
+        }
+    }//GEN-LAST:event_edtSenhaKeyPressed
+
     private void realizarLogin() {
         String email = edtEmail.getText();
         String senha = new String(edtSenha.getPassword());
@@ -184,12 +203,16 @@ public class FrLogin extends javax.swing.JFrame {
             return; //para encerrar a execução do método
         }
 
+        senha = Utils.calcularHash(senha);
+        
         UsuarioController controller = new UsuarioController();
 
         boolean autenticado = controller.autenticar(email, senha);
 
         if (autenticado) {
-            JOptionPane.showMessageDialog(null, "Logado com sucesso");
+            //se está autenticado cria a tela de menu
+           FrMenu telaMenu = new FrMenu();
+           telaMenu.setVisible(true);
         } else {
             JOptionPane.showMessageDialog(null, "Usuário ou senha incorretos");
         }
