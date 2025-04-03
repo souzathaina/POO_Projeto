@@ -85,8 +85,18 @@ public class FrMenu extends javax.swing.JFrame {
         );
 
         meCadastro.setText("Cadastro");
+        meCadastro.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                meCadastroActionPerformed(evt);
+            }
+        });
 
         miCadUsuario.setText("Usuário");
+        miCadUsuario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miCadUsuarioActionPerformed(evt);
+            }
+        });
         meCadastro.add(miCadUsuario);
 
         jMenuItem2.setText("?????");
@@ -150,8 +160,20 @@ public class FrMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowOpened
 
     private void miSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSairActionPerformed
-       this.dispose(); //vai fechar a janela
+       this.dispose(); //vai fechar a janela completamente
     }//GEN-LAST:event_miSairActionPerformed
+
+    private void meCadastroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_meCadastroActionPerformed
+        
+    }//GEN-LAST:event_meCadastroActionPerformed
+
+    private void miCadUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miCadUsuarioActionPerformed
+        //criou uma tela de cadastro de usuario, o this referencia a tela anterior de onde ele veio
+        FrCadUsuario telaCadastro = new FrCadUsuario(this, rootPaneCheckingEnabled);
+        
+        //tornou a tela visivel
+        telaCadastro.setVisible(true);
+    }//GEN-LAST:event_miCadUsuarioActionPerformed
 
     /**
      * @param args the command line arguments
