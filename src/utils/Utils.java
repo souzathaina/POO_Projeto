@@ -9,6 +9,10 @@ criação do jframe menu
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import javax.swing.JOptionPane;
 
 public class Utils {
     public static String calcularHash (String senha) {
@@ -33,5 +37,23 @@ public class Utils {
             System.out.println("Algoritimo SHA1 não encontrado");
         }
         return hashSHA1;
+    }
+    //
+    public static Date converterStringToDate(String texto) {
+        
+        //string com a formataççao, contru o fomrato que quero transformar o texto
+        SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");//o MM e para não confundir por minutos
+        
+        //crio a variavel data que sera o retorno do metodo
+        Date data = null;
+        
+        try{
+            //tenta converter a String em Date baseado no formato construido anteriormente
+            data=formato.parse(texto);
+        } catch (ParseException ex){
+            JOptionPane.showMessageDialog(null, "Erro ao converter a data");
+        }
+        //retorna a data convertida
+        return data;
     }
 }

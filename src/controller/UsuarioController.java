@@ -53,4 +53,65 @@ public class UsuarioController {
         }
         return false;
     }
+
+    public boolean inserirUsuario(Usuario usu) {
+        //mostrar o comando
+        String sql = "INSERT INTO USUARIO(nome, email, senha, dataNasc, ativo)"
+                + " VALUES (?,?,?,?,?)";
+        //cria uma instancia do gerenciador de coenxao que o banco de dados
+        GerenciadorConexao gerenciador = new GerenciadorConexao();
+        //declara as variaveis como nulas antes do try para poder utilizar o finally, passei uma string e p prepared analisou
+        PreparedStatement comando = null;//não precisa do resultSet pois não tem um select comnado de leitura de dados
+        try {
+            //prepara o sql, analisando o formato e as variaveis
+            comando = gerenciador.prepararComando(sql);
+            //define o valor de cada variavel (?) pela posição em que aparece no sql
+            comando.setString(1, usu.getNome());
+            comando.setString(2, usu.getEmail());
+            comando.setString(3, usu.getSenha());
+            comando.setDate(4, new java.sql.Date(usu.getDataNasc().getTime()));
+            comando.setBoolean(5, usu.isAtivo());
+            //executa o insert 
+            comando.executeUpdate();
+            return true;
+        } catch (SQLException e) {//caso ocorra um erro relacionado ao banco de dados
+            JOptionPane.showMessageDialog(null, e.getMessage()); //exibe popup com o erro
+        } finally { //depois de executar o try, dando erro ou não executa o finally
+            gerenciador.fecharConexao(comando);
+        }
+
+        return false;
+    }
+
+    public boolean alterarUsuario(Usuario usu) {
+        String sql = "UPDATE USUARIO SET (nome, email, senha, dataNasc, ativo, PkUsuario)"
+                + "VALUES (?,?,?,?,?,?)";
+
+        GerenciadorConexao gerenciador = new GerenciadorConexao();
+
+        PreparedStatement comando = null;
+
+        try {
+            comando = gerenciador.prepararComando(sql);
+
+            
+            comando.setString(1, usu.getNome());
+            comando.setString(2, usu.getEmail());
+            comando.setString(3, usu.getSenha());
+            comando.setDate(4, new java.sql.Date(usu.getDataNasc().getTime()));
+            comando.setBoolean(5, usu.isAtivo());
+            comando.setInt(6, usu.getPkUsuario());
+
+            // Executa a atualização
+            int linhasAfetadas = comando.executeUpdate();
+            return linhasAfetadas > 0; // Retorna verdadeiro se a atualização foi bem-sucedida
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage()); // Exibe uma mensagem de erro em caso de exceção
+        } finally {
+            // Fecha a conexão, independente de erro ou sucesso
+            gerenciador.fecharConexao(comando);
+        }
+
+        return false; // Retorna falso em caso de falha
+    }
 }

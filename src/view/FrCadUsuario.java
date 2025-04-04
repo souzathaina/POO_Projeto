@@ -5,7 +5,9 @@
  */
 package view;
 
+import controller.UsuarioController;
 import java.net.URL;
+import java.util.Date;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import model.Usuario;
@@ -23,7 +25,7 @@ public class FrCadUsuario extends javax.swing.JDialog {
     public FrCadUsuario(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        
+
         this.setLocationRelativeTo(null);
     }
 
@@ -239,7 +241,7 @@ public class FrCadUsuario extends javax.swing.JDialog {
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         //adiciona a imgem icone no executar projeto
         URL caminhoImagem = getClass().getResource("/images/icon.png");
-        
+
         ImageIcon icon = new ImageIcon(caminhoImagem);
 
         //define o icone da janela
@@ -261,21 +263,31 @@ public class FrCadUsuario extends javax.swing.JDialog {
         Usuario usu = new Usuario();
         String lSenha = new String(edtSenha.getPassword());
         String lHashSenha = utils.Utils.calcularHash(lSenha);
-        
-        Date dataNasc = //conversao de String para Date
+
+        //conversao de String para Date
+        Date dataNasc = Utils.converterStringToDate(edtDataNasc.getText());//conversao de String para Date
+
         usu.setNome(edtNome.getText());
         usu.setEmail(edtEmail.getText());
         usu.setSenha(lHashSenha);
         usu.setAtivo(chkAtivo.isSelected());
         usu.setDataNasc(dataNasc);
-        
+
+        //depois passo o objetopara o controller e ele irá gravar no banco de dados
+        UsuarioController controller = new UsuarioController();
+        if (controller.inserirUsuario(usu)) {
+            JOptionPane.showMessageDialog(null, "Usuário gravado com sucesso!");
+            this.dispose();//s tela de cadatro fecha
+        } else {
+            JOptionPane.showMessageDialog(null, "O cadastro não foi gravado ");
+        }
     }
-    
+//gravar cadastro no MySQL (inserirUsuario), realizar alteração no cadastro (update)
 
     private void btnSalvarKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_btnSalvarKeyPressed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnSalvarKeyPressed
-    
+    //validações no CadUsuario
     public boolean verificarCampos() {
         // Pegando os valores dos campos e removendo espaços extras
         String nome = edtNome.getText().trim();
@@ -283,7 +295,7 @@ public class FrCadUsuario extends javax.swing.JDialog {
         String senha = new String(edtSenha.getPassword()).trim();
         String confirmarSenha = new String(edtConfirmarSenha.getPassword()).trim();
         String dataNascimento = edtDataNasc.getText().trim();
-        
+
         if (edtNome.getText().equals("")) {
             JOptionPane.showMessageDialog(null, "O campo 'Nome' está em branco");
             return false;
@@ -292,7 +304,7 @@ public class FrCadUsuario extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(null, "Nome inválido! Use apenas letras e espaços.");
             return false;
         }
-        
+
         if (edtEmail.getText().equals("")) {
             JOptionPane.showMessageDialog(null, "O campo 'Email' está em branco");
             return false;
@@ -311,7 +323,7 @@ public class FrCadUsuario extends javax.swing.JDialog {
         }
         String lSenha = new String(edtSenha.getPassword());
         String lConfirmarSenha = new String(edtConfirmarSenha.getPassword());
-        
+
         if (!lSenha.equals(lConfirmarSenha)) {
             JOptionPane.showMessageDialog(null, "As senhas não são iguais");
             return false;
