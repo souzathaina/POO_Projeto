@@ -94,7 +94,6 @@ public class UsuarioController {
         try {
             comando = gerenciador.prepararComando(sql);
 
-            
             comando.setString(1, usu.getNome());
             comando.setString(2, usu.getEmail());
             comando.setString(3, usu.getSenha());
@@ -113,5 +112,49 @@ public class UsuarioController {
         }
 
         return false; // Retorna falso em caso de falha
+    }
+
+    public Usuario buscarPorPk(int PkUsuario) {
+        //guarda o sql
+        String sql = "SELECT * FROM USUARIO "
+                + "WHERE PKUSUARIO= ?";
+
+        //cria um gerenciador de conexao
+        GerenciadorConexao gerenciador = new GerenciadorConexao();
+        //cria as variaveis antes do try pois vao ser usadas no finally
+        PreparedStatement comando = null;
+        ResultSet resultado = null;//resultado de uma pesquisa qunado é usado o select
+
+        Usuario usu = new Usuario();
+
+        try {
+            comando = gerenciador.prepararComando(sql);
+
+            comando.setInt(1, PkUsuario);
+
+            //executa o comando e guardo o resultado
+            resultado = comando.executeQuery();
+
+            //irá precorrer os registros do sql
+            //a cada next() a variavel resultado aponta para o proximo registro
+            //enquanto next() == from quer dizer que tem registros
+            if (resultado.next()) {
+                
+                //leio as informações da variavel resultado
+                usu.setPkUsuario(resultado.getInt("pkusuario"));
+                usu.setNome(resultado.getString("nome"));
+                usu.setEmail(resultado.getString("email"));
+                usu.setSenha(resultado.getString("senha"));
+                usu.setDataNasc(resultado.getDate("datanasc"));
+                usu.setAtivo(resultado.getBoolean("ativo"));
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(UsuarioController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            gerenciador.fecharConexao(comando, resultado);
+        }
+        //retorna a usuárop
+        return usu;
     }
 }

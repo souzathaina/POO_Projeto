@@ -56,4 +56,16 @@ public class Utils {
         //retorna a data convertida
         return data;
     }
+    public static String converterDateToString(Date data) {
+        SimpleDateFormat formato = new SimpleDateFormat ("dd/MM/yyyy");
+        String texto = "";
+        
+        try {
+            //irá formatar a data para o fomrato dd/MM/yyyy
+            texto = formato.format(data);
+        }catch (Exception ex){
+            JOptionPane.showMessageDialog(null, "Erro ao formatar data");
+        }
+        return texto;
+    }
 }
