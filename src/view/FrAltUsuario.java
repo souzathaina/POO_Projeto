@@ -1,13 +1,12 @@
 /*
-criao do FrAltUsuario (possivel alterar dados do usuario, botáo alterar senha caso deseja altera-la também
-no Utils converterDateToString
-no UsuarioController buscarPorPk (possibilita a busca no FrAltUsuario, pelo id)
-no FrMeni
  */
 package view;
 
 import controller.UsuarioController;
 import java.awt.Color;
+import java.net.URL;
+import java.util.Date;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import model.Usuario;
 import utils.Utils;
@@ -23,7 +22,6 @@ public class FrAltUsuario extends javax.swing.JDialog {
     /**
      * Creates new form FrAltUsuario
      */
-
     public FrAltUsuario(java.awt.Frame parent, boolean modal, int pkusuario) {
         super(parent, modal);
         initComponents();
@@ -34,6 +32,39 @@ public class FrAltUsuario extends javax.swing.JDialog {
         setPkUsuario(pkusuario);
         //carregar os dados deste usuario
         carregarUsuario();
+
+    }
+
+    public void gravar() {
+        //cria o objeto usuario
+        Usuario usuario = new Usuario();
+
+        //preenche os dados dos usuario
+        usuario.setPkUsuario(pkusuario); //pkusuario é p atributo da classe que veio do menu
+        usuario.setNome(edtNome.getText());
+        usuario.setEmail(edtEmail.getText());
+
+        if (edtSenha.isEditable()) {
+            String senha = new String(edtSenha.getPassword());
+            String senhaHash = Utils.calcularHash(senha);
+            usuario.setSenha(senhaHash);
+        }
+
+        Date data = Utils.converterStringToDate(edtDataNasc.getText());
+        usuario.setDataNasc(data);
+
+        usuario.setAtivo(chkAtivo.isSelected());
+
+        //passar o objeto usu para o controller
+        //enviar para o banco de dados
+        UsuarioController controller = new UsuarioController();
+
+        if (controller.alterarUsuario(usuario)) {
+            JOptionPane.showMessageDialog(null, "Usuários: " + usuario.getNome() + " alterado com sucesso!");
+            this.dispose();
+        } else {
+            JOptionPane.showMessageDialog(null, "Usuários não será alterado!");
+        }
     }
 
     public void carregarUsuario() {
@@ -84,7 +115,7 @@ public class FrAltUsuario extends javax.swing.JDialog {
         jPanel1.setToolTipText("Cadastro Usuário");
 
         lblTitulo.setFont(new java.awt.Font("Tahoma", 1, 30)); // NOI18N
-        lblTitulo.setText("Cadastro de Usuário");
+        lblTitulo.setText("Alterar de Usuário");
 
         lblNome.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         lblNome.setText("Nome");
@@ -158,6 +189,7 @@ public class FrAltUsuario extends javax.swing.JDialog {
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/caduser64.png"))); // NOI18N
 
+        edtCodigo.setEditable(false);
         edtCodigo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 edtCodigoActionPerformed(evt);
@@ -212,14 +244,11 @@ public class FrAltUsuario extends javax.swing.JDialog {
                                         .addGap(31, 31, 31)))
                                 .addComponent(edtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(57, 57, 57))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(lblEmail)
-                                    .addComponent(lblSenha)
-                                    .addComponent(edtDataNasc, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(edtSenha, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lblDataNasc))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                            .addComponent(lblEmail)
+                            .addComponent(lblSenha)
+                            .addComponent(edtDataNasc, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(edtSenha, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblDataNasc))
                         .addComponent(edtConfirmarSenha, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -306,8 +335,10 @@ public class FrAltUsuario extends javax.swing.JDialog {
     }//GEN-LAST:event_chkAtivoActionPerformed
 
     private void btnSalvarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSalvarMouseClicked
+
     }
-        public boolean verificarCampos() {
+
+    public boolean verificarCampos() {
         // Pegando os valores dos campos e removendo espaços extras
         String nome = edtNome.getText().trim();
         String email = edtEmail.getText().trim();
@@ -332,13 +363,22 @@ public class FrAltUsuario extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(null, "E-mail inválido! Use o formato a@a.com.");
             return false;
         }
+                if (edtSenha.isEditable()){
+
         if (new String(edtSenha.getPassword()).equals("")) {
             JOptionPane.showMessageDialog(null, "O campo 'Senha' está em branco");
             return false;
         }
-        if (senha.length() < 6) {
-            JOptionPane.showMessageDialog(null, "A senha deve ter no mínimo 6 caracteres.");
+                }
+        if (edtSenha.isEditable()){
+            
+        
+        if (senha.length() < 8) {
+            JOptionPane.showMessageDialog(null, "A senha deve ter no mínimo 8 caracteres.");
             return false;
+        }
+    }else {
+            return true;
         }
         String lSenha = new String(edtSenha.getPassword());
         String lConfirmarSenha = new String(edtConfirmarSenha.getPassword());
@@ -360,11 +400,14 @@ public class FrAltUsuario extends javax.swing.JDialog {
             return false;
         }
         return true;
-    
+
     }//GEN-LAST:event_btnSalvarMouseClicked
 
+
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
-        // TODO add your handling code here:
+        if(verificarCampos()){
+            gravar();
+        }
     }//GEN-LAST:event_btnSalvarActionPerformed
 
     private void btnSalvarKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_btnSalvarKeyPressed

@@ -84,8 +84,12 @@ public class UsuarioController {
     }
 
     public boolean alterarUsuario(Usuario usu) {
-        String sql = "UPDATE USUARIO SET (nome, email, senha, dataNasc, ativo, PkUsuario)"
-                + "VALUES (?,?,?,?,?,?)";
+        String sql = "UPDATE USUARIO SET nome = ?, email = ? ";
+
+        if (usu.getSenha() != null) {
+            sql = sql + ", senha = ?";
+        }
+        sql = sql + " , dataNasc = ?, ativo = ? WHERE pkusuario = ? ";
 
         GerenciadorConexao gerenciador = new GerenciadorConexao();
 
@@ -96,16 +100,28 @@ public class UsuarioController {
 
             comando.setString(1, usu.getNome());
             comando.setString(2, usu.getEmail());
-            comando.setString(3, usu.getSenha());
-            comando.setDate(4, new java.sql.Date(usu.getDataNasc().getTime()));
-            comando.setBoolean(5, usu.isAtivo());
-            comando.setInt(6, usu.getPkUsuario());
+
+            int numCampo = 3;
+            
+            if (usu.getSenha() != null) {
+                comando.setString(3, usu.getSenha());
+                numCampo++;
+            }
+            comando.setDate(numCampo, new java.sql.Date(usu.getDataNasc().getTime()));
+            numCampo++;
+            
+            comando.setBoolean(numCampo, usu.isAtivo());
+            numCampo++;
+            
+            comando.setInt(numCampo, usu.getPkUsuario());
+            numCampo++;
 
             // Executa a atualização
-            int linhasAfetadas = comando.executeUpdate();
-            return linhasAfetadas > 0; // Retorna verdadeiro se a atualização foi bem-sucedida
+            comando.executeUpdate();
+            return true;
+
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage()); // Exibe uma mensagem de erro em caso de exceção
+            JOptionPane.showMessageDialog(null, e); // Exibe uma mensagem de erro em caso de exceção
         } finally {
             // Fecha a conexão, independente de erro ou sucesso
             gerenciador.fecharConexao(comando);
@@ -139,13 +155,13 @@ public class UsuarioController {
             //a cada next() a variavel resultado aponta para o proximo registro
             //enquanto next() == from quer dizer que tem registros
             if (resultado.next()) {
-                
+
                 //leio as informações da variavel resultado
                 usu.setPkUsuario(resultado.getInt("pkusuario"));
                 usu.setNome(resultado.getString("nome"));
                 usu.setEmail(resultado.getString("email"));
                 usu.setSenha(resultado.getString("senha"));
-                usu.setDataNasc(resultado.getDate("datanasc"));
+                usu.setDataNasc(resultado.getDate("dataNasc"));
                 usu.setAtivo(resultado.getBoolean("ativo"));
             }
 

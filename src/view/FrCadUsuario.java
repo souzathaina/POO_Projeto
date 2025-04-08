@@ -259,6 +259,7 @@ public class FrCadUsuario extends javax.swing.JDialog {
             gravar();
         }
     }//GEN-LAST:event_btnSalvarMouseClicked
+
     public void gravar() {
         Usuario usu = new Usuario();
         String lSenha = new String(edtSenha.getPassword());
@@ -317,8 +318,8 @@ public class FrCadUsuario extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(null, "O campo 'Senha' está em branco");
             return false;
         }
-        if (senha.length() < 6) {
-            JOptionPane.showMessageDialog(null, "A senha deve ter no mínimo 6 caracteres.");
+        if (senha.length() < 8) {
+            JOptionPane.showMessageDialog(null, "A senha deve ter no mínimo 8 caracteres.");
             return false;
         }
         String lSenha = new String(edtSenha.getPassword());
